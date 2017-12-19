@@ -12,9 +12,9 @@ def run(model, maxSteps=1000):
         observation, reward, done, info = env.step(env.action_space.sample())
         observations.append(observation)
         rewards.append(reward)
-        if done:
-            print("Finished after %d time steps.", step+1)
-            break
+        # if done:
+            # print("Finished after", step+1, "time steps.")
+            # break
 
 def rewardHistory():
     plt.plot(rewards)
