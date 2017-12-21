@@ -2,6 +2,7 @@ import gym
 from gym import error, spaces, utils
 from gym.utils import seeding
 from gym.envs.classic_control import rendering
+import numpy as np
 
 class SplitPongEnv(gym.Env):
 
@@ -12,23 +13,60 @@ class SplitPongEnv(gym.Env):
     ##################
 
     def __init__(self):
+
         self.side = 0 # 0 = left, 1 = right, 2 = dual
         self.leftPaddlePos = 100
         self.rightPaddlePos = 100
+        self.paddleSize = 10
         self.ballXPos = 50
         self.ballYPos = 100
-        self.ballDirection = 0 # 0 = left, 1 = right
-        self.YVel = 0
+        self.ballXVel = 1
+        self.ballYVel = 0
+
         self.viewer = None
         self.game_width = 100
         self.game_height = 200
+
+        self.action_space = spaces.MultiDiscrete([[-1,1], [-1,1]])
+        self.observation_space = spaces.Box(np.array([0, 0, 0, 0]), np.array([self.game_height, self.game_height, self.game_width, self.game_height])) # paddle1, paddle2, ballX, ballY
 
     #################
     # Taking a Step #
     #################
 
     def _step(self, action):
-        assert 1 == 1
+
+        assert self.action_space.contains(action), "%r (%s) invalid"%(action, type(action))
+        self.leftPaddlePos += action[0]
+        self.rightPaddlePos += action[1]
+
+        self.ballXPos += self.ballXVel
+        self.ballYPos += self.ballYVel
+        self.ballYPos = self.ballYPos % self.game_height
+
+        done = False
+        reward = 0.0
+
+        if self.ballXPos == 0:
+            self.ballYVel = np.random.uniform(-5,5)
+            if abs(self.leftPaddlePos-self.ballYPos) < self.paddleSize:
+                reward = 1.0
+                self.ballXVel *= -1
+            else:
+                reward = -1.0
+                self.ballXPos = self.game_width/2
+
+        if self.ballXPos == self.game_width:
+            self.ballYVel = np.random.uniform(-5,5)
+            if abs(self.rightPaddlePos-self.ballYPos) < self.paddleSize:
+                reward = 1.0
+                self.ballXVel *= -1
+            else:
+                reward = -1.0
+                self.ballXPos = self.game_width/2
+
+        self.state = (self.leftPaddlePos, self.rightPaddlePos, self.ballXPos, self.ballYPos)
+        return np.array(self.state), reward, done, {}
 
     #############
     # Resetting #
