@@ -66,7 +66,7 @@ class SplitPongEnv(gym.Env):
                 self.ballXPos = self.game_width/2
 
         self.state = (self.leftPaddlePos, self.rightPaddlePos, self.ballXPos, self.ballYPos)
-        return np.array(self.state), reward, done, {}
+        return np.array(self.state), reward, done, {} # observations, reward, done, notes
 
     #############
     # Resetting #

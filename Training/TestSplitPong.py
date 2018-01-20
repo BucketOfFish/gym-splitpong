@@ -1,3 +1,5 @@
+# Test split pong environment with a random agent
+
 import gym
 import gym_splitpong
 from OpenAIPackages import *
@@ -5,4 +7,4 @@ from OpenAIPackages import *
 # env = gym.make("splitpong-v0")
 # env.render()
 
-run("splitpong-v0", 10000)
+runRandom("splitpong-v0", 10000)

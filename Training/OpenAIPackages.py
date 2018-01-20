@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 observations = []
 rewards = []
 
-def run(model, maxSteps=1000):
+def runRandom(model, maxSteps=1000):
     env = gym.make(model)
     env.reset()
     for step in range(maxSteps):
